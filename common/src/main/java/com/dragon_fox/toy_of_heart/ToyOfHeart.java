@@ -4,6 +4,7 @@ import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -29,19 +30,25 @@ public final class ToyOfHeart {
 
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(MOD_ID, RegistryKeys.BLOCK);
 
-	public static final RegistrySupplier<Block> ASSEMBLER = BLOCKS.register("assembler", () -> new Block(Block.Settings.copy(net.minecraft.block.Blocks.STONE)));
+	public static final RegistrySupplier<Block> ASSEMBLER_BLOCK = BLOCKS.register("assembler", () -> new AssemblerBlock(Block.Settings.copy(net.minecraft.block.Blocks.STONE)));
 
 
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MOD_ID, RegistryKeys.ITEM);
 
 	public static final RegistrySupplier<Item> DOLL_ITEM = ITEMS.register("doll", () -> new Item(new Item.Settings()));
 
-	public static final RegistrySupplier<Item> ASSEMBLER_ITEM = ITEMS.register(ASSEMBLER.getId(), () -> new BlockItem(ASSEMBLER.get(), new Item.Settings().arch$tab(ToyOfHeart.TAB)));
+	public static final RegistrySupplier<Item> ASSEMBLER_ITEM = ITEMS.register(ASSEMBLER_BLOCK.getId(), () -> new BlockItem(ASSEMBLER_BLOCK.get(), new Item.Settings().arch$tab(ToyOfHeart.TAB)));
+
+
+	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(MOD_ID, RegistryKeys.BLOCK_ENTITY_TYPE);
+
+	public static final RegistrySupplier<BlockEntityType<?>> ASSEMBLER = BLOCK_ENTITIES.register("assembler", () -> BlockEntityType.Builder.create(Assembler::new, ASSEMBLER_BLOCK.get()).build(null));
 
 
 	public static void init() {
 		TABS.register();
 		BLOCKS.register();
 		ITEMS.register();
+		BLOCK_ENTITIES.register();
 	}
 }
