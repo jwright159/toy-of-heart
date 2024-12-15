@@ -1,0 +1,1 @@
+A [[Body]] that is like a typical Minecraft player torso.

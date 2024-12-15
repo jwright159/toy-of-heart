@@ -1,0 +1,1 @@
+A [[Skin]] that is pretty and white. May be painted with armor trims.

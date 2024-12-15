@@ -1,0 +1,1 @@
+A [[Sensor]] that is required for a doll to interact with the world.

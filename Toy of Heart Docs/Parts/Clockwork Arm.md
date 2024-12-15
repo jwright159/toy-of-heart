@@ -1,0 +1,1 @@
+An [[Arm]] that lets the doll pick up and put down items.

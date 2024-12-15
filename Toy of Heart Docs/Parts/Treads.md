@@ -1,0 +1,1 @@
+A [[Leg]] that traverses well on ice but not in water.

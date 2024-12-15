@@ -1,0 +1,1 @@
+A [[Sensor]] that lets the doll respond to chat inputs.

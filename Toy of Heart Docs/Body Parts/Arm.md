@@ -1,0 +1,1 @@
+Lets the doll interact with the world.

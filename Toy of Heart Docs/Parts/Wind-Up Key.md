@@ -1,0 +1,1 @@
+A [[Power Source]] that must be hand-wound every so often.

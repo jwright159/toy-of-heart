@@ -1,0 +1,1 @@
+An [[Arm]] that allows the doll to attack.

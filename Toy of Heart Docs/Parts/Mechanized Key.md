@@ -1,0 +1,1 @@
+A  [[Power Source]] that is a variant of the [[Wind-Up Key]] that doesn't need to be wound. Sounds kinda redundant tbh.

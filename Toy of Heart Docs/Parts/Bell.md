@@ -1,0 +1,1 @@
+A [[Heart]] that causes the doll to ring cheerfully when it completes a task.
