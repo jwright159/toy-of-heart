@@ -1,0 +1,24 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"texture_size": [12, 8],
+	"textures": {
+		"0": "toy_of_heart:item/slim_body",
+		"particle": "toy_of_heart:item/slim_body"
+	},
+	"elements": [
+		{
+			"from": [6, 0, 7],
+			"to": [10, 6, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"north": {"uv": [2.66667, 4, 8, 16], "texture": "#0"},
+				"east": {"uv": [0, 4, 2.66667, 16], "texture": "#0"},
+				"south": {"uv": [10.66667, 4, 16, 16], "texture": "#0"},
+				"west": {"uv": [8, 4, 10.66667, 16], "texture": "#0"},
+				"up": {"uv": [8, 4, 2.66667, 0], "texture": "#0"},
+				"down": {"uv": [13.33333, 0, 8, 4], "texture": "#0"}
+			}
+		}
+	]
+}

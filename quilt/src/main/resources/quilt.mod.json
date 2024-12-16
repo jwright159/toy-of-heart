@@ -15,7 +15,10 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
       "init": [
-        "com.dragon_fox.toy_of_heart.quilt.ExampleModQuilt"
+        "com.dragon_fox.toy_of_heart.quilt.ToyOfHeartQuilt"
+      ],
+      "client": [
+        "com.dragon_fox.toy_of_heart.quilt.client.ToyOfHeartQuiltClient"
       ]
     },
     "depends": [

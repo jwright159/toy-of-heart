@@ -2,9 +2,14 @@ package com.dragon_fox.toy_of_heart;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 public class Assembler extends BlockEntity {
 	public ItemStack rootPart = ItemStack.EMPTY;
@@ -16,11 +21,9 @@ public class Assembler extends BlockEntity {
 	@Override
 	protected void writeNbt(NbtCompound nbt) {
 		super.writeNbt(nbt);
-		if (!rootPart.isEmpty()) {
-			NbtCompound rootPartNbt = new NbtCompound();
-			rootPart.writeNbt(rootPartNbt);
-			nbt.put("rootPart", rootPartNbt);
-		}
+		NbtCompound rootPartNbt = new NbtCompound();
+		rootPart.writeNbt(rootPartNbt);
+		nbt.put("rootPart", rootPartNbt);
 	}
 
 	@Override
@@ -28,6 +31,23 @@ public class Assembler extends BlockEntity {
 		super.readNbt(nbt);
 		if (nbt.contains("rootPart")) {
 			rootPart = ItemStack.fromNbt(nbt.getCompound("rootPart"));
+		}
+	}
+
+	@Nullable
+	@Override
+	public Packet<ClientPlayPacketListener> toUpdatePacket() {
+		return BlockEntityUpdateS2CPacket.create(this);
+	}
+
+	@Override
+	public NbtCompound toInitialChunkDataNbt() {
+		return createNbt();
+	}
+
+	public void dropItems() {
+		if (!rootPart.isEmpty() && world != null) {
+			world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, rootPart.copyAndEmpty()));
 		}
 	}
 }
