@@ -1,10 +1,13 @@
 package com.dragonfox.toyofheart;
 
 import dev.architectury.registry.CreativeTabRegistry;
+import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -36,10 +39,16 @@ public final class ToyOfHeart {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(MOD_ID, RegistryKeys.BLOCK_ENTITY_TYPE);
 	public static final RegistrySupplier<BlockEntityType<Assembler>> ASSEMBLER = BLOCK_ENTITIES.register("assembler", () -> BlockEntityType.Builder.create(Assembler::new, ASSEMBLER_BLOCK.get()).build(null));
 
+	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(MOD_ID, RegistryKeys.ENTITY_TYPE);
+	public static final RegistrySupplier<EntityType<Doll>> DOLL = ENTITIES.register("doll", () -> EntityType.Builder.create(Doll::new, SpawnGroup.MISC).setDimensions(0.75f, 0.75f).build("doll"));
+
 	public static void init() {
 		TABS.register();
 		BLOCKS.register();
 		ITEMS.register();
 		BLOCK_ENTITIES.register();
+		ENTITIES.register();
+
+		EntityAttributeRegistry.register(DOLL, Doll::createMobAttributes);
 	}
 }
