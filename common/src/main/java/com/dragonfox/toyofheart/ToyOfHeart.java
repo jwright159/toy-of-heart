@@ -26,7 +26,7 @@ public final class ToyOfHeart {
 	);
 
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(MOD_ID, RegistryKeys.BLOCK);
-	public static final RegistrySupplier<Block> ASSEMBLER_BLOCK = BLOCKS.register("assembler", () -> new AssemblerBlock(Block.Settings.copy(net.minecraft.block.Blocks.STONE)));
+	public static final RegistrySupplier<Block> ASSEMBLER_BLOCK = BLOCKS.register("assembler", () -> new AssemblerBlock(Block.Settings.copy(net.minecraft.block.Blocks.STONE).nonOpaque()));
 
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MOD_ID, RegistryKeys.ITEM);
 	public static final RegistrySupplier<Item> DOLL_ITEM = ITEMS.register("doll", () -> new Item(new Item.Settings()));
