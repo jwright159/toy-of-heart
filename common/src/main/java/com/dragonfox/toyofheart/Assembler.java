@@ -50,4 +50,16 @@ public class Assembler extends BlockEntity {
 			world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, rootPart.copyAndEmpty()));
 		}
 	}
+
+	public void deployDoll() {
+		if (!rootPart.isEmpty() && world != null) {
+			ItemStack dollItem = rootPart.copyAndEmpty();
+			Doll doll = new Doll(ToyOfHeart.DOLL.get(), world);
+			BlockState state = getCachedState();
+			doll.refreshPositionAndAngles(pos, state.get(AssemblerBlock.FACING).asRotation(), 0.0F);
+			world.spawnEntity(doll);
+			markDirty();
+			world.updateListeners(pos, state, state, 2);
+		}
+	}
 }

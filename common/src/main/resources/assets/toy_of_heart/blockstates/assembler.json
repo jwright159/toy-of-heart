@@ -1,5 +1,19 @@
 {
   "variants": {
-    "": { "model": "toy_of_heart:block/assembler" }
+    "facing=east": {
+      "model": "toy_of_heart:block/assembler",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "toy_of_heart:block/assembler"
+    },
+    "facing=south": {
+      "model": "toy_of_heart:block/assembler",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "toy_of_heart:block/assembler",
+      "y": 270
+    }
   }
 }
