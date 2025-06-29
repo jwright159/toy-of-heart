@@ -1,6 +1,6 @@
-package com.dragon_fox.toy_of_heart.quilt.client;
+package com.dragonfox.toyofheart.quilt.client;
 
-import com.dragon_fox.toy_of_heart.fabriclike.ToyOfHeartClientFabricLike;
+import com.dragonfox.toyofheart.fabriclike.ToyOfHeartClientFabricLike;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 

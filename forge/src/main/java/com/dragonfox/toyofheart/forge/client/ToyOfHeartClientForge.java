@@ -1,7 +1,7 @@
-package com.dragon_fox.toy_of_heart.forge.client;
+package com.dragonfox.toyofheart.forge.client;
 
-import com.dragon_fox.toy_of_heart.ToyOfHeart;
-import com.dragon_fox.toy_of_heart.client.ToyOfHeartClient;
+import com.dragonfox.toyofheart.ToyOfHeart;
+import com.dragonfox.toyofheart.client.ToyOfHeartClient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

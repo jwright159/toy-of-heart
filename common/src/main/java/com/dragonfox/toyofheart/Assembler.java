@@ -1,4 +1,4 @@
-package com.dragon_fox.toy_of_heart;
+package com.dragonfox.toyofheart;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;

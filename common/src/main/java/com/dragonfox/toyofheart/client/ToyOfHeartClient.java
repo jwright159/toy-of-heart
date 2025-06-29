@@ -1,6 +1,6 @@
-package com.dragon_fox.toy_of_heart.client;
+package com.dragonfox.toyofheart.client;
 
-import com.dragon_fox.toy_of_heart.ToyOfHeart;
+import com.dragonfox.toyofheart.ToyOfHeart;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 
 public class ToyOfHeartClient {

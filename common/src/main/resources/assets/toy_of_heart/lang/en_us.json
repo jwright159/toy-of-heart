@@ -1,9 +1,6 @@
 {
-  "category.toy_of_heart": "Toy of Heart",
-
+  "itemGroup.toy_of_heart": "Toy of Heart",
   "block.toy_of_heart.assembler": "Assembler",
-
   "item.toy_of_heart.doll": "Doll",
-
   "item.toy_of_heart.slim_body": "Slim Body"
 }

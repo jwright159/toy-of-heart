@@ -1,6 +1,6 @@
-package com.dragon_fox.toy_of_heart.fabric.client;
+package com.dragonfox.toyofheart.fabric.client;
 
-import com.dragon_fox.toy_of_heart.fabriclike.ToyOfHeartClientFabricLike;
+import com.dragonfox.toyofheart.fabriclike.ToyOfHeartClientFabricLike;
 import net.fabricmc.api.ClientModInitializer;
 
 public final class ToyOfHeartFabricClient implements ClientModInitializer {
