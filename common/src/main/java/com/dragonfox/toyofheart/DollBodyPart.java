@@ -16,6 +16,16 @@ public class DollBodyPart extends Item {
 		this.partDepth = partDepth;
 	}
 
+	public double getPartWidth() {
+		return partWidth;
+	}
+	public double getPartHeight() {
+		return partHeight;
+	}
+	public double getPartDepth() {
+		return partDepth;
+	}
+
 	public RaycastResult raycast(Vec3 pos, Vec3 dir, Vec3 partPos, Quaternionf partRot)
 	{
 //		ToyOfHeart.LOGGER.info("Before transform: pos = {}, dir = {}, partPos = {}, partRot = {}", pos, dir, partPos, partRot);
