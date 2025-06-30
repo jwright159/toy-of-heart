@@ -1,29 +1,11 @@
 package com.dragonfox.toyofheart;
 
-import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
-public class DollBodyPart extends Item {
-	private final double partWidth;
-	private final double partHeight;
-	private final double partDepth;
-
+public class DollBodyPart extends DollPart {
 	public DollBodyPart(Properties properties, double partWidth, double partHeight, double partDepth) {
-		super(properties);
-		this.partWidth = partWidth;
-		this.partHeight = partHeight;
-		this.partDepth = partDepth;
-	}
-
-	public double getPartWidth() {
-		return partWidth;
-	}
-	public double getPartHeight() {
-		return partHeight;
-	}
-	public double getPartDepth() {
-		return partDepth;
+		super(properties, partWidth, partHeight, partDepth);
 	}
 
 	public RaycastResult raycast(Vec3 pos, Vec3 dir, Vec3 partPos, Quaternionf partRot)
@@ -71,9 +53,9 @@ public class DollBodyPart extends Item {
 		double distance = tMin;
 		Vec3 localHitPos = pos.add(dir.scale(distance));
 		Vec3 localHitNormal = new Vec3(
-			Math.abs(localHitPos.x - minX) < 1e-6 ? -1 : (Math.abs(localHitPos.x - maxX) < 1e-6 ? 1 : 0),
-			Math.abs(localHitPos.y - minY) < 1e-6 ? -1 : (Math.abs(localHitPos.y - maxY) < 1e-6 ? 1 : 0),
-			Math.abs(localHitPos.z - minZ) < 1e-6 ? -1 : (Math.abs(localHitPos.z - maxZ) < 1e-6 ? 1 : 0)
+				Math.abs(localHitPos.x - minX) < 1e-6 ? -1 : (Math.abs(localHitPos.x - maxX) < 1e-6 ? 1 : 0),
+				Math.abs(localHitPos.y - minY) < 1e-6 ? -1 : (Math.abs(localHitPos.y - maxY) < 1e-6 ? 1 : 0),
+				Math.abs(localHitPos.z - minZ) < 1e-6 ? -1 : (Math.abs(localHitPos.z - maxZ) < 1e-6 ? 1 : 0)
 		);
 		dir = new Vec3(partRot.transform(localHitPos.toVector3f()));
 		pos = new Vec3(partRot.transform(pos.toVector3f()));

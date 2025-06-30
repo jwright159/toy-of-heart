@@ -2,6 +2,7 @@ package com.dragonfox.toyofheart.client;
 
 import com.dragonfox.toyofheart.AssemblingDoll;
 import com.dragonfox.toyofheart.DollBodyPart;
+import com.dragonfox.toyofheart.DollPart;
 import com.dragonfox.toyofheart.ToyOfHeart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,7 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDoll> {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
 			ItemStack heldItemStack = player.getItemInHand(InteractionHand.MAIN_HAND).copyWithCount(1);
-			if (entity.getRootPart().getItem() instanceof DollBodyPart bodyPart && heldItemStack.getItem() instanceof DollBodyPart heldBodyPart)
+			if (entity.getRootPart().getItem() instanceof DollBodyPart bodyPart && heldItemStack.getItem() instanceof DollPart heldPart)
 			{
 				DollBodyPart.RaycastResult result = bodyPart.raycast(player.getEyePosition(tickDelta), player.getViewVector(tickDelta), entity.getPosition(tickDelta), rot);
 				if (result.hit) {
@@ -63,7 +64,7 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDoll> {
 					Quaternionf orientation = new Quaternionf(axisAngle);
 					pose.mulPose(orientation);
 
-					pose.translate(0, heldBodyPart.getPartHeight() / 2.0, 0);
+					pose.translate(0, heldPart.getPartHeight() / 2.0, 0);
 
 					Minecraft.getInstance().getItemRenderer().renderStatic(heldItemStack, ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, pose, buffers, entity.level(), 0);
 					pose.popPose();
