@@ -1,11 +1,19 @@
 package com.dragonfox.toyofheart;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-public class Doll extends PathAwareEntity {
-	public Doll(EntityType<? extends PathAwareEntity> entityType, World world) {
-		super(entityType, world);
+public class Doll extends PathfinderMob {
+	public final ItemStack rootPart;
+
+	public Doll(EntityType<? extends PathfinderMob> entityType, Level level, ItemStack rootPart) {
+		super(entityType, level);
+		this.rootPart = rootPart.copy();
+	}
+
+	public static Doll spawnDefault(EntityType<Doll> type, Level level) {
+		return new Doll(type, level, ItemStack.EMPTY);
 	}
 }

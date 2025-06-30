@@ -1,65 +1,131 @@
 package com.dragonfox.toyofheart;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class Assembler extends BlockEntity {
-	public ItemStack rootPart = ItemStack.EMPTY;
+	private ItemStack rootPart = ItemStack.EMPTY;
+	private AssemblingDoll doll = null;
+	private UUID dollUUID = null;
 
 	public Assembler(BlockPos pos, BlockState state) {
 		super(ToyOfHeart.ASSEMBLER.get(), pos, state);
 	}
 
 	@Override
-	protected void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
-		NbtCompound rootPartNbt = new NbtCompound();
-		rootPart.writeNbt(rootPartNbt);
-		nbt.put("rootPart", rootPartNbt);
-	}
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		ToyOfHeart.LOGGER.info("Saving assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, rootPart, doll != null ? doll.getUUID() : null, level);
+		if (!rootPart.isEmpty()) {
+			tag.put("rootPart", rootPart.save(provider));
+		}
 
-	@Override
-	public void readNbt(NbtCompound nbt) {
-		super.readNbt(nbt);
-		if (nbt.contains("rootPart")) {
-			rootPart = ItemStack.fromNbt(nbt.getCompound("rootPart"));
+		if (getDoll() != null) {
+			tag.putUUID("dollUUID", getDoll().getUUID());
+		} else if (dollUUID != null) {
+			tag.putUUID("dollUUID", dollUUID);
 		}
 	}
 
-	@Nullable
 	@Override
-	public Packet<ClientPlayPacketListener> toUpdatePacket() {
-		return BlockEntityUpdateS2CPacket.create(this);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		ToyOfHeart.LOGGER.info("Loading assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, tag.contains("rootPart") ? tag.get("rootPart") : ItemStack.EMPTY, tag.contains("dollUUID") ? tag.getUUID("dollUUID") : null, level);
+		if (tag.contains("rootPart")) {
+			rootPart = ItemStack.parseOptional(provider, tag.getCompound("rootPart"));
+		} else {
+			rootPart = ItemStack.EMPTY;
+		}
+
+		if (tag.contains("dollUUID")) {
+			dollUUID = tag.getUUID("dollUUID");
+			if (level instanceof ServerLevel serverLevel) {
+				// Server level is null when this is loaded for the first time
+				doll = (AssemblingDoll) serverLevel.getEntity(dollUUID);
+			} else {
+				doll = null;
+			}
+		} else if (tag.contains("dollId") && level != null) {
+			dollUUID = null;
+			doll = (AssemblingDoll) level.getEntity(tag.getInt("dollId"));
+		} else {
+			dollUUID = null;
+			doll = null;
+		}
 	}
 
 	@Override
-	public NbtCompound toInitialChunkDataNbt() {
-		return createNbt();
+	public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		CompoundTag tag = saveWithoutMetadata(provider);
+		tag.putInt("dollId", getDoll() != null ? getDoll().getId() : -1);
+		return tag;
+	}
+
+	@Override
+	public Packet<ClientGamePacketListener> getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	public AssemblingDoll getDoll() {
+		if (doll == null && dollUUID != null && level instanceof ServerLevel serverLevel) {
+			doll = (AssemblingDoll) serverLevel.getEntity(dollUUID);
+		}
+		return doll;
 	}
 
 	public void dropItems() {
-		if (!rootPart.isEmpty() && world != null) {
-			world.spawnEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, rootPart.copyAndEmpty()));
-		}
+		if (!hasDoll() || level == null) return;
+
+		level.addFreshEntity(new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, removeDoll()));
 	}
 
 	public void deployDoll() {
-		if (!rootPart.isEmpty() && world != null) {
-			ItemStack dollItem = rootPart.copyAndEmpty();
-			Doll doll = new Doll(ToyOfHeart.DOLL.get(), world);
-			BlockState state = getCachedState();
-			doll.refreshPositionAndAngles(pos, state.get(AssemblerBlock.FACING).asRotation(), 0.0F);
-			world.spawnEntity(doll);
-			markDirty();
-			world.updateListeners(pos, state, state, 2);
+		if (!hasDoll() || level == null) return;
+
+		AssemblingDoll doll = getDoll();
+		Doll newDoll = new Doll(ToyOfHeart.DOLL.get(), level, this.rootPart);
+		newDoll.moveTo(doll.getX(), doll.getY(), doll.getZ(), doll.getYRot(), doll.getXRot());
+		level.addFreshEntity(newDoll);
+		removeDoll();
+	}
+
+	public boolean hasDoll() {
+		return !rootPart.isEmpty();
+	}
+
+	public void addDoll(ItemStack rootPart) {
+		if (hasDoll() || level == null) return;
+
+		this.rootPart = rootPart.copy();
+		doll = new AssemblingDoll(ToyOfHeart.ASSEMBLING_DOLL.get(), level, this.rootPart);
+		BlockState state = getBlockState();
+		doll.moveTo(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, state.getValue(AssemblerBlock.FACING).toYRot(), 0.0F);
+		level.addFreshEntity(doll);
+		dollUUID = doll.getUUID();
+		setChanged();
+		level.sendBlockUpdated(worldPosition, state, state, 2);
+	}
+
+	public ItemStack removeDoll() {
+		if (!hasDoll() || level == null) return ItemStack.EMPTY;
+
+		if (getDoll() != null) {
+			getDoll().discard();
 		}
+		doll = null;
+		dollUUID = null;
+		setChanged();
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+		return rootPart.copyAndClear();
 	}
 }

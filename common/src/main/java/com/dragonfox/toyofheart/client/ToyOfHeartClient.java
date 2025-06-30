@@ -1,13 +1,11 @@
 package com.dragonfox.toyofheart.client;
 
 import com.dragonfox.toyofheart.ToyOfHeart;
-import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public class ToyOfHeartClient {
-	public static final EntityModelLayer DOLL_MODEL_LAYER = new EntityModelLayer(ToyOfHeart.DOLL.getId(), "main");
+	public static final ModelLayerLocation DOLL_MODEL_LAYER = new ModelLayerLocation(ToyOfHeart.DOLL.getId(), "main");
 
 	public static void init() {
-		BlockEntityRendererRegistry.register(ToyOfHeart.ASSEMBLER.get(), AssemblerRenderer::new);
 	}
 }

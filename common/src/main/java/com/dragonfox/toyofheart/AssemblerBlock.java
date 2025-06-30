@@ -1,125 +1,123 @@
 package com.dragonfox.toyofheart;
 
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
-public class AssemblerBlock extends BlockWithEntity {
-	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+public class AssemblerBlock extends BaseEntityBlock {
+	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	private static final MapCodec<AssemblerBlock> CODEC = simpleCodec(AssemblerBlock::new);
 
 	private static final HorizontalVoxelShape SHAPES = new HorizontalVoxelShape(
-			Block.createCuboidShape(0, 0, 0, 16, 2, 16),
-			Block.createCuboidShape(6, 2, 9, 10, 14, 13)
+			Block.box(0, 0, 0, 16, 2, 16),
+			Block.box(6, 2, 9, 10, 14, 13)
 	);
 
-	public AssemblerBlock(Settings settings) {
+	public AssemblerBlock(Properties settings) {
 		super(settings);
-		this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+		this.registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new Assembler(pos, state);
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.MODEL;
+	public @NotNull RenderShape getRenderShape(BlockState state) {
+		return RenderShape.MODEL;
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-		return SHAPES.get(state.get(FACING));
+	public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return SHAPES.get(state.getValue(FACING));
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		if (!world.isClient) {
-			if (world.getBlockEntity(pos) instanceof Assembler assembler) {
-				ItemStack stack = player.getStackInHand(hand);
-				if (assembler.rootPart.isEmpty() && stack.getItem() == ToyOfHeart.SLIM_BODY.get()) {
-					assembler.rootPart = stack.copyWithCount(1);
+	public @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (!level.isClientSide) {
+			if (level.getBlockEntity(pos) instanceof Assembler assembler) {
+				ItemStack stack = player.getItemInHand(hand);
+				if (!assembler.hasDoll() && stack.getItem() == ToyOfHeart.SLIM_BODY.get()) {
+					assembler.addDoll(stack.copyWithCount(1));
 					if (!player.isCreative()) {
-						stack.decrement(1);
+						stack.shrink(1);
 					}
-					assembler.markDirty();
-					world.updateListeners(pos, state, state, 2);
-				} else if (!assembler.rootPart.isEmpty() && stack.isEmpty()) {
-					player.getInventory().offerOrDrop(assembler.rootPart);
-					assembler.markDirty();
-					world.updateListeners(pos, state, state, 2);
+				} else if (assembler.hasDoll() && stack.isEmpty()) {
+					ItemStack rootPart = assembler.removeDoll();
+					player.getInventory().placeItemBackInInventory(rootPart);
 				}
 			}
 		}
-		return ActionResult.SUCCESS;
+		return ItemInteractionResult.SUCCESS;
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext ctx) {
-		return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
 	}
 
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public BlockState rotate(BlockState state, BlockRotation rotation) {
-		return state.with(FACING, rotation.rotate(state.get(FACING)));
+	public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+		return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public BlockState mirror(BlockState state, BlockMirror mirror) {
-		return state.rotate(mirror.getRotation(state.get(FACING)));
+	public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 
 	@Override
-	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-		if (!state.isOf(newState.getBlock())) {
-			if (world.getBlockEntity(pos) instanceof Assembler assembler) {
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+		if (!state.is(newState.getBlock())) {
+			if (level.getBlockEntity(pos) instanceof Assembler assembler) {
 				assembler.dropItems();
 			}
 		}
 
-		super.onStateReplaced(state, world, pos, newState, moved);
+		super.onRemove(state, level, pos, newState, moved);
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-		if (world.isReceivingRedstonePower(pos)) {
-			world.scheduleBlockTick(pos, this, 0);
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+		if (level.hasNeighborSignal(pos)) {
+			level.scheduleTick(pos, this, 0);
 		}
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-		if (world.getBlockEntity(pos) instanceof Assembler assembler) {
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		if (level.getBlockEntity(pos) instanceof Assembler assembler) {
 			assembler.deployDoll();
 		}
+	}
+
+	@Override
+	protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 }

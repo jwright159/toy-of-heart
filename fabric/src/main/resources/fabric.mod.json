@@ -3,34 +3,30 @@
   "id": "toy_of_heart",
   "version": "${version}",
   "name": "Toy of Heart",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": [
-    "Me!"
-  ],
+  "description": "",
+  "authors": [""],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
-  },
-  "license": "CC0-1.0",
+    "homepage": ""  },
+  "license": "All-Rights-Reserved",
   "icon": "assets/toy_of_heart/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.dragon_fox.toy_of_heart.fabric.ToyOfHeartFabric"
+      "com.dragonfox.toyofheart.fabric.ToyOfHeartFabric"
     ],
     "client": [
-      "com.dragon_fox.toy_of_heart.fabric.client.ToyOfHeartFabricClient"
+      "com.dragonfox.toyofheart.fabric.client.ToyOfHeartFabricClient"
     ]
   },
   "mixins": [
     "toy_of_heart.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.9",
-    "minecraft": "~1.20.1",
-    "java": ">=17",
-    "architectury": ">=9.2.14",
-    "fabric-api": "*"
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+    ,"architectury": ">=13.0.8"
+    ,"fabric-api": "*"
   },
   "suggests": {
     "another-mod": "*"

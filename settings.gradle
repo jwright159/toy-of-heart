@@ -11,6 +11,4 @@ rootProject.name = 'toy_of_heart'
 
 include 'common'
 include 'fabric'
-include 'fabric-like'
-include 'forge'
-include 'quilt'
+include 'neoforge'
