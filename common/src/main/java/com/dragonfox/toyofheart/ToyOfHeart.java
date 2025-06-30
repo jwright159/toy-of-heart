@@ -39,7 +39,7 @@ public final class ToyOfHeart {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MOD_ID, Registries.ITEM);
 	public static final RegistrySupplier<Item> DOLL_ITEM = ITEMS.register("doll", () -> new Item(new Item.Properties()));
 	public static final RegistrySupplier<Item> ASSEMBLER_ITEM = ITEMS.register(ASSEMBLER_BLOCK.getId(), () -> new BlockItem(ASSEMBLER_BLOCK.get(), new Item.Properties().arch$tab(ToyOfHeart.TAB)));
-	public static final RegistrySupplier<Item> SLIM_BODY = ITEMS.register("slim_body", () -> new Item(new Item.Properties().arch$tab(ToyOfHeart.TAB)));
+	public static final RegistrySupplier<Item> SLIM_BODY = ITEMS.register("slim_body", () -> new DollBodyPart(new Item.Properties().arch$tab(ToyOfHeart.TAB), 4f / 16f, 6f / 16f, 2f / 16f));
 
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(MOD_ID, Registries.BLOCK_ENTITY_TYPE);
 	public static final RegistrySupplier<BlockEntityType<Assembler>> ASSEMBLER = BLOCK_ENTITIES.register("assembler", () -> BlockEntityType.Builder.of(Assembler::new, ASSEMBLER_BLOCK.get()).build(null));
