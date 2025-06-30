@@ -17,12 +17,12 @@ public class DollBodyPart extends DollPart {
 		dir = new Vec3(partRotInv.transform(dir.toVector3f()));
 //		ToyOfHeart.LOGGER.info("After transform: pos = {}, dir = {}", pos, dir);
 
-		double minX = -partWidth / 2;
-		double maxX = partWidth / 2;
+		double minX = -getPartWidth() / 2;
+		double maxX = getPartWidth() / 2;
 		double minY = 0;
-		double maxY = partHeight;
-		double minZ = -partDepth / 2;
-		double maxZ = partDepth / 2;
+		double maxY = getPartHeight();
+		double minZ = -getPartDepth() / 2;
+		double maxZ = getPartDepth() / 2;
 
 		// https://gdbooks.gitbooks.io/3dcollisions/content/Chapter3/raycast_aabb.html
 		double tMinX = (minX - pos.x) / dir.x;
