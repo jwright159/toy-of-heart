@@ -1,4 +1,4 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.shapes.Shapes;

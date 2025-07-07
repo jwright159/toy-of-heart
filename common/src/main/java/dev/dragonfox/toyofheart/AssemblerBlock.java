@@ -1,4 +1,4 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

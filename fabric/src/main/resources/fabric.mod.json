@@ -12,10 +12,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.dragonfox.toyofheart.fabric.ToyOfHeartFabric"
+      "dev.dragonfox.toyofheart.fabric.ToyOfHeartFabric"
     ],
     "client": [
-      "com.dragonfox.toyofheart.fabric.client.ToyOfHeartFabricClient"
+      "dev.dragonfox.toyofheart.fabric.client.ToyOfHeartFabricClient"
     ]
   },
   "mixins": [

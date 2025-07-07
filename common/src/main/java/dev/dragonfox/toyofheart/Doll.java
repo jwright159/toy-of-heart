@@ -1,4 +1,4 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;

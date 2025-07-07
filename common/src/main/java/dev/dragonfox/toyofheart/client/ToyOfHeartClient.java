@@ -1,6 +1,6 @@
-package com.dragonfox.toyofheart.client;
+package dev.dragonfox.toyofheart.client;
 
-import com.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.ToyOfHeart;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public class ToyOfHeartClient {

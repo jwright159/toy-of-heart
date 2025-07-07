@@ -1,6 +1,6 @@
-package com.dragonfox.toyofheart.fabric;
+package dev.dragonfox.toyofheart.fabric;
 
-import com.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.ToyOfHeart;
 import net.fabricmc.api.ModInitializer;
 
 public final class ToyOfHeartFabric implements ModInitializer {

@@ -1,4 +1,4 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.level.entity.EntityAttributeRegistry;

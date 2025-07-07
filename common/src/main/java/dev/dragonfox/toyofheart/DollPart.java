@@ -1,4 +1,4 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import net.minecraft.world.item.Item;
 

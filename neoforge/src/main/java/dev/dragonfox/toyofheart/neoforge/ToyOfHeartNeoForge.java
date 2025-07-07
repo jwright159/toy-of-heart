@@ -1,6 +1,6 @@
-package com.dragonfox.toyofheart.neoforge;
+package dev.dragonfox.toyofheart.neoforge;
 
-import com.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.ToyOfHeart;
 import net.neoforged.fml.common.Mod;
 
 @Mod(ToyOfHeart.MOD_ID)

@@ -1,10 +1,10 @@
-package com.dragonfox.toyofheart.neoforge;
+package dev.dragonfox.toyofheart.neoforge;
 
-import com.dragonfox.toyofheart.ToyOfHeart;
-import com.dragonfox.toyofheart.client.AssemblingDollRenderer;
-import com.dragonfox.toyofheart.client.DollModel;
-import com.dragonfox.toyofheart.client.DollRenderer;
-import com.dragonfox.toyofheart.client.ToyOfHeartClient;
+import dev.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.client.AssemblingDollRenderer;
+import dev.dragonfox.toyofheart.client.DollModel;
+import dev.dragonfox.toyofheart.client.DollRenderer;
+import dev.dragonfox.toyofheart.client.ToyOfHeartClient;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

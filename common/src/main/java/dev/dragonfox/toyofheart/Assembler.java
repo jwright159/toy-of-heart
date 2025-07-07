@@ -1,4 +1,4 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -26,7 +26,7 @@ public class Assembler extends BlockEntity {
 
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-		ToyOfHeart.LOGGER.info("Saving assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, rootPart, doll != null ? doll.getUUID() : null, level);
+//		ToyOfHeart.LOGGER.info("Saving assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, rootPart, doll != null ? doll.getUUID() : null, level);
 		if (!rootPart.isEmpty()) {
 			tag.put("rootPart", rootPart.save(provider));
 		}
@@ -40,7 +40,7 @@ public class Assembler extends BlockEntity {
 
 	@Override
 	public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-		ToyOfHeart.LOGGER.info("Loading assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, tag.contains("rootPart") ? tag.get("rootPart") : ItemStack.EMPTY, tag.contains("dollUUID") ? tag.getUUID("dollUUID") : null, level);
+//		ToyOfHeart.LOGGER.info("Loading assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, tag.contains("rootPart") ? tag.get("rootPart") : ItemStack.EMPTY, tag.contains("dollUUID") ? tag.getUUID("dollUUID") : null, level);
 		if (tag.contains("rootPart")) {
 			rootPart = ItemStack.parseOptional(provider, tag.getCompound("rootPart"));
 		} else {

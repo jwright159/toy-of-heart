@@ -1,6 +1,6 @@
-package com.dragonfox.toyofheart.client;
+package dev.dragonfox.toyofheart.client;
 
-import com.dragonfox.toyofheart.Doll;
+import dev.dragonfox.toyofheart.Doll;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

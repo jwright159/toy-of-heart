@@ -1,13 +1,18 @@
-package com.dragonfox.toyofheart;
+package dev.dragonfox.toyofheart;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 public class AssemblingDoll extends Entity {
 	private static final EntityDataAccessor<ItemStack> ROOT_PART = SynchedEntityData.defineId(AssemblingDoll.class, EntityDataSerializers.ITEM_STACK);
@@ -42,5 +47,21 @@ public class AssemblingDoll extends Entity {
 
 	public void setRootPart(ItemStack rootPart) {
 		entityData.set(ROOT_PART, rootPart.copy());
+	}
+
+	@Override
+	public boolean isPickable() {
+		return !this.isRemoved();
+	}
+
+	@Override
+	public @NotNull InteractionResult interact(Player player, InteractionHand interactionHand) {
+		if (getRootPart().getItem() instanceof DollBodyPart bodyPart)
+		{
+			Quaternionf rot = new Quaternionf().rotationY((float)Math.toRadians(getYRot()));
+			DollBodyPart.RaycastResult result = bodyPart.raycast(player.getEyePosition(), player.getViewVector(1), position(), rot);
+		}
+
+		return super.interact(player, interactionHand);
 	}
 }

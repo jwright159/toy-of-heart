@@ -1,10 +1,10 @@
-package com.dragonfox.toyofheart.fabric.client;
+package dev.dragonfox.toyofheart.fabric.client;
 
-import com.dragonfox.toyofheart.ToyOfHeart;
-import com.dragonfox.toyofheart.client.AssemblingDollRenderer;
-import com.dragonfox.toyofheart.client.DollModel;
-import com.dragonfox.toyofheart.client.DollRenderer;
-import com.dragonfox.toyofheart.client.ToyOfHeartClient;
+import dev.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.client.AssemblingDollRenderer;
+import dev.dragonfox.toyofheart.client.DollModel;
+import dev.dragonfox.toyofheart.client.DollRenderer;
+import dev.dragonfox.toyofheart.client.ToyOfHeartClient;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import net.fabricmc.api.ClientModInitializer;

@@ -1,9 +1,9 @@
-package com.dragonfox.toyofheart.client;
+package dev.dragonfox.toyofheart.client;
 
-import com.dragonfox.toyofheart.AssemblingDoll;
-import com.dragonfox.toyofheart.DollBodyPart;
-import com.dragonfox.toyofheart.DollPart;
-import com.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.AssemblingDoll;
+import dev.dragonfox.toyofheart.DollBodyPart;
+import dev.dragonfox.toyofheart.DollPart;
+import dev.dragonfox.toyofheart.ToyOfHeart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -39,7 +39,8 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDoll> {
 		pose.popPose();
 
 		LocalPlayer player = Minecraft.getInstance().player;
-		if (player != null) {
+		if (Minecraft.getInstance().crosshairPickEntity == entity && player != null)
+		{
 			ItemStack heldItemStack = player.getItemInHand(InteractionHand.MAIN_HAND).copyWithCount(1);
 			if (entity.getRootPart().getItem() instanceof DollBodyPart bodyPart && heldItemStack.getItem() instanceof DollPart heldPart)
 			{

@@ -1,7 +1,7 @@
-package com.dragonfox.toyofheart.client;
+package dev.dragonfox.toyofheart.client;
 
-import com.dragonfox.toyofheart.Doll;
-import com.dragonfox.toyofheart.ToyOfHeart;
+import dev.dragonfox.toyofheart.Doll;
+import dev.dragonfox.toyofheart.ToyOfHeart;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
