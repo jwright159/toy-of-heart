@@ -39,14 +39,14 @@ public final class ToyOfHeart {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MOD_ID, Registries.ITEM);
 	public static final RegistrySupplier<Item> DOLL_ITEM = ITEMS.register("doll", () -> new Item(new Item.Properties()));
 	public static final RegistrySupplier<Item> ASSEMBLER_ITEM = ITEMS.register(ASSEMBLER_BLOCK.getId(), () -> new BlockItem(ASSEMBLER_BLOCK.get(), new Item.Properties().arch$tab(ToyOfHeart.TAB)));
-	public static final RegistrySupplier<Item> SLIM_BODY = ITEMS.register("slim_body", () -> new DollBodyPart(new Item.Properties().arch$tab(ToyOfHeart.TAB), 4f / 16f, 6f / 16f, 2f / 16f));
+	public static final RegistrySupplier<Item> SLIM_BODY = ITEMS.register("slim_body", () -> new DollBodyPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 4f / 16f, 6f / 16f, 2f / 16f));
 
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(MOD_ID, Registries.BLOCK_ENTITY_TYPE);
-	public static final RegistrySupplier<BlockEntityType<Assembler>> ASSEMBLER = BLOCK_ENTITIES.register("assembler", () -> BlockEntityType.Builder.of(Assembler::new, ASSEMBLER_BLOCK.get()).build(null));
+	public static final RegistrySupplier<BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = BLOCK_ENTITIES.register("assembler", () -> BlockEntityType.Builder.of(AssemblerBlockEntity::new, ASSEMBLER_BLOCK.get()).build(null));
 
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(MOD_ID, Registries.ENTITY_TYPE);
-	public static final RegistrySupplier<EntityType<Doll>> DOLL = ENTITIES.register("doll", () -> EntityType.Builder.of(Doll::spawnDefault, MobCategory.MISC).sized(0.75f, 0.75f).build("doll"));
-	public static final RegistrySupplier<EntityType<AssemblingDoll>> ASSEMBLING_DOLL = ENTITIES.register("assembling_doll", () -> EntityType.Builder.of(AssemblingDoll::spawnDefault, MobCategory.MISC).sized(4f / 16f, 6f / 16f).build("assembling_doll"));
+	public static final RegistrySupplier<EntityType<DollEntity>> DOLL = ENTITIES.register("doll", () -> EntityType.Builder.of(DollEntity::spawnDefault, MobCategory.MISC).sized(0.75f, 0.75f).build("doll"));
+	public static final RegistrySupplier<EntityType<AssemblingDollEntity>> ASSEMBLING_DOLL = ENTITIES.register("assembling_doll", () -> EntityType.Builder.of(AssemblingDollEntity::spawnDefault, MobCategory.MISC).sized(4f / 16f, 6f / 16f).build("assembling_doll"));
 
 	public static void init() {
 		TABS.register();
@@ -55,6 +55,6 @@ public final class ToyOfHeart {
 		BLOCK_ENTITIES.register();
 		ENTITIES.register();
 
-		EntityAttributeRegistry.register(DOLL, Doll::createMobAttributes);
+		EntityAttributeRegistry.register(DOLL, DollEntity::createMobAttributes);
 	}
 }

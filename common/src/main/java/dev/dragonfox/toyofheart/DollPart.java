@@ -1,26 +1,96 @@
 package dev.dragonfox.toyofheart;
 
-import net.minecraft.world.item.Item;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
-public class DollPart extends Item {
-	private final double partWidth;
-	private final double partHeight;
-	private final double partDepth;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-	public DollPart(Properties properties, double partWidth, double partHeight, double partDepth) {
-		super(properties);
-		this.partWidth = partWidth;
-		this.partHeight = partHeight;
-		this.partDepth = partDepth;
+public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> subParts) {
+	public static final Codec<DollPart> CODEC = Codec.recursive(DollPart.class.getSimpleName(), recursed ->
+			RecordCodecBuilder.create(
+					instance -> instance.group(
+							ItemStack.CODEC.fieldOf("itemStack").forGetter(part -> part.itemStack),
+							ExtraCodecs.MATRIX4F.fieldOf("transform").forGetter(part -> part.transform),
+							recursed.listOf().fieldOf("subParts").forGetter(part -> part.subParts)
+					).apply(instance, DollPart::new)
+			));
+	public static final Codec<Optional<DollPart>> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC);
+
+	public static final StreamCodec<ByteBuf, Matrix4f> TRANSFORM_STREAM_CODEC = ByteBufCodecs.FLOAT.apply(ByteBufCodecs.list(16)).map(
+			list -> new Matrix4f(
+					list.get(0), list.get(1), list.get(2), list.get(3),
+					list.get(4), list.get(5), list.get(6), list.get(7),
+					list.get(8), list.get(9), list.get(10), list.get(11),
+					list.get(12), list.get(13), list.get(14), list.get(15)),
+			matrix -> List.of(
+					matrix.m00(), matrix.m01(), matrix.m02(), matrix.m03(),
+					matrix.m10(), matrix.m11(), matrix.m12(), matrix.m13(),
+					matrix.m20(), matrix.m21(), matrix.m22(), matrix.m23(),
+					matrix.m30(), matrix.m31(), matrix.m32(), matrix.m33())
+	);
+	public static final StreamCodec<RegistryFriendlyByteBuf, DollPart> STREAM_CODEC = StreamCodec.recursive(recursed ->
+			StreamCodec.composite(
+					ItemStack.STREAM_CODEC,
+					part -> part.itemStack,
+					TRANSFORM_STREAM_CODEC,
+					part -> part.transform,
+					recursed.apply(ByteBufCodecs.list()),
+					parts -> parts.subParts,
+					DollPart::new
+			));
+
+	public static final EntityDataSerializer<DollPart> SERIALIZER = EntityDataSerializer.forValueType(STREAM_CODEC);
+	public static final EntityDataSerializer<Optional<DollPart>> OPTIONAL_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.optional(STREAM_CODEC));
+	public static final EntityDataSerializer<Optional<DollPart>> TRANSFORM_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.optional(STREAM_CODEC));
+
+	public DollPart(ItemStack itemStack) {
+		this(itemStack, new Matrix4f(), List.of());
 	}
 
-	public double getPartWidth() {
-		return partWidth;
+	public Stream<DollPart> allDollParts() {
+		return subParts.stream().map(DollPart::allDollParts).reduce(Stream.of(this), Stream::concat);
 	}
-	public double getPartHeight() {
-		return partHeight;
+
+	public Optional<RaycastHit> raycast(Vec3 rayPos, Vec3 rayDir, Vec3 entityPos, Quaternionf entityRot) {
+		DollPartItem partItem = (DollPartItem) itemStack.getItem();
+		Matrix4f partTransform = new Matrix4f();
+		partTransform.translate(entityPos.toVector3f());
+		partTransform.rotate(entityRot);
+		partTransform.mul(transform);
+		return partItem.raycast(this, rayPos.toVector3f(), rayDir.toVector3f(), partTransform);
 	}
-	public double getPartDepth() {
-		return partDepth;
+
+	public Optional<RaycastHit> raycastAll(Vec3 rayPos, Vec3 rayDir, Vec3 entityPos, Quaternionf entityRot) {
+		return allDollParts()
+				.flatMap(part -> part.raycast(rayPos, rayDir, entityPos, entityRot).stream())
+				.min(Comparator.comparingDouble(RaycastHit::distance));
+	}
+
+	@Override
+	public @NotNull String toString() {
+		String toString = itemStack.getItem().toString();
+		if (!subParts.isEmpty())
+			toString += " -> {" + subParts.stream().map(DollPart::toString)
+					.collect(Collectors.joining(", ")) + "}";
+		return toString;
+	}
+
+	public record RaycastHit(DollPart hitPart, double distance, Vector3f worldHitPos, Vector3f localHitPos, Vector3f worldHitNormal, Vector3f localHitNormal) {
 	}
 }

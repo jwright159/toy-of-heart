@@ -15,12 +15,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class Assembler extends BlockEntity {
+public class AssemblerBlockEntity extends BlockEntity {
 	private ItemStack rootPart = ItemStack.EMPTY;
-	private AssemblingDoll doll = null;
+	private AssemblingDollEntity doll = null;
 	private UUID dollUUID = null;
 
-	public Assembler(BlockPos pos, BlockState state) {
+	public AssemblerBlockEntity(BlockPos pos, BlockState state) {
 		super(ToyOfHeart.ASSEMBLER.get(), pos, state);
 	}
 
@@ -51,13 +51,13 @@ public class Assembler extends BlockEntity {
 			dollUUID = tag.getUUID("dollUUID");
 			if (level instanceof ServerLevel serverLevel) {
 				// Server level is null when this is loaded for the first time
-				doll = (AssemblingDoll) serverLevel.getEntity(dollUUID);
+				doll = (AssemblingDollEntity) serverLevel.getEntity(dollUUID);
 			} else {
 				doll = null;
 			}
 		} else if (tag.contains("dollId") && level != null) {
 			dollUUID = null;
-			doll = (AssemblingDoll) level.getEntity(tag.getInt("dollId"));
+			doll = (AssemblingDollEntity) level.getEntity(tag.getInt("dollId"));
 		} else {
 			dollUUID = null;
 			doll = null;
@@ -76,9 +76,9 @@ public class Assembler extends BlockEntity {
 		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
-	public AssemblingDoll getDoll() {
+	public AssemblingDollEntity getDoll() {
 		if (doll == null && dollUUID != null && level instanceof ServerLevel serverLevel) {
-			doll = (AssemblingDoll) serverLevel.getEntity(dollUUID);
+			doll = (AssemblingDollEntity) serverLevel.getEntity(dollUUID);
 		}
 		return doll;
 	}
@@ -92,8 +92,8 @@ public class Assembler extends BlockEntity {
 	public void deployDoll() {
 		if (!hasDoll() || level == null) return;
 
-		AssemblingDoll doll = getDoll();
-		Doll newDoll = new Doll(ToyOfHeart.DOLL.get(), level, this.rootPart);
+		AssemblingDollEntity doll = getDoll();
+		DollEntity newDoll = new DollEntity(ToyOfHeart.DOLL.get(), level, this.rootPart);
 		newDoll.moveTo(doll.getX(), doll.getY(), doll.getZ(), doll.getYRot(), doll.getXRot());
 		level.addFreshEntity(newDoll);
 		removeDoll();
@@ -107,7 +107,7 @@ public class Assembler extends BlockEntity {
 		if (hasDoll() || level == null) return;
 
 		this.rootPart = rootPart.copy();
-		doll = new AssemblingDoll(ToyOfHeart.ASSEMBLING_DOLL.get(), level, this.rootPart);
+		doll = new AssemblingDollEntity(ToyOfHeart.ASSEMBLING_DOLL.get(), level, this.rootPart);
 		BlockState state = getBlockState();
 		doll.moveTo(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, state.getValue(AssemblerBlock.FACING).toYRot(), 0.0F);
 		level.addFreshEntity(doll);

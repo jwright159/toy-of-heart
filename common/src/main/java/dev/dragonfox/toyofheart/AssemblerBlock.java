@@ -38,7 +38,7 @@ public class AssemblerBlock extends BaseEntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return new Assembler(pos, state);
+		return new AssemblerBlockEntity(pos, state);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class AssemblerBlock extends BaseEntityBlock {
 	@Override
 	public @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (!level.isClientSide) {
-			if (level.getBlockEntity(pos) instanceof Assembler assembler) {
+			if (level.getBlockEntity(pos) instanceof AssemblerBlockEntity assembler) {
 				ItemStack stack = player.getItemInHand(hand);
 				if (!assembler.hasDoll() && stack.getItem() == ToyOfHeart.SLIM_BODY.get()) {
 					assembler.addDoll(stack.copyWithCount(1));
@@ -94,7 +94,7 @@ public class AssemblerBlock extends BaseEntityBlock {
 	@Override
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
 		if (!state.is(newState.getBlock())) {
-			if (level.getBlockEntity(pos) instanceof Assembler assembler) {
+			if (level.getBlockEntity(pos) instanceof AssemblerBlockEntity assembler) {
 				assembler.dropItems();
 			}
 		}
@@ -111,7 +111,7 @@ public class AssemblerBlock extends BaseEntityBlock {
 
 	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		if (level.getBlockEntity(pos) instanceof Assembler assembler) {
+		if (level.getBlockEntity(pos) instanceof AssemblerBlockEntity assembler) {
 			assembler.deployDoll();
 		}
 	}

@@ -1,6 +1,6 @@
 package dev.dragonfox.toyofheart.client;
 
-import dev.dragonfox.toyofheart.Doll;
+import dev.dragonfox.toyofheart.DollEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,7 +13,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public class DollModel extends EntityModel<Doll> {
+public class DollModel extends EntityModel<DollEntity> {
 	private final ModelPart base;
 
 	public DollModel(ModelPart root) {
@@ -28,7 +28,7 @@ public class DollModel extends EntityModel<Doll> {
 	}
 
 	@Override
-	public void setupAnim(Doll entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(DollEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 	}
 
 	@Override
