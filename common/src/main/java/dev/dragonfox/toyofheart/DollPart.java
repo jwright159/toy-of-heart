@@ -8,6 +8,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -57,10 +58,13 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 
 	public static final EntityDataSerializer<DollPart> SERIALIZER = EntityDataSerializer.forValueType(STREAM_CODEC);
 	public static final EntityDataSerializer<Optional<DollPart>> OPTIONAL_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.optional(STREAM_CODEC));
-	public static final EntityDataSerializer<Optional<DollPart>> TRANSFORM_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.optional(STREAM_CODEC));
 
 	public DollPart(ItemStack itemStack) {
 		this(itemStack, new Matrix4f(), List.of());
+	}
+
+	public DollPart(ItemStack itemStack, Matrix4f transform) {
+		this(itemStack, transform, List.of());
 	}
 
 	public Stream<DollPart> allDollParts() {
@@ -80,6 +84,48 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 		return allDollParts()
 				.flatMap(part -> part.raycast(rayPos, rayDir, entityPos, entityRot).stream())
 				.min(Comparator.comparingDouble(RaycastHit::distance));
+	}
+
+	public Optional<DollPart> withChildPart(DollPart parent, DollPart child) {
+		if (parent == this) {
+			return Optional.of(new DollPart(itemStack, transform, Stream.concat(subParts.stream(), Stream.of(child)).collect(Collectors.toList())));
+		}
+		for (int i = 0; i < subParts.size(); i++) {
+			DollPart subPart = subParts.get(i);
+			Optional<DollPart> updatedSubPart = subPart.withChildPart(parent, child);
+			if (updatedSubPart.isPresent()) {
+				return Optional.of(new DollPart(itemStack, transform,
+						Stream.concat(
+								subParts.stream().limit(i),
+								Stream.concat(Stream.of(updatedSubPart.get()), subParts.stream().skip(i + 1))
+						).collect(Collectors.toList())));
+			}
+		}
+		return Optional.empty();
+	}
+
+	public Optional<Tuple<Optional<DollPart>, List<ItemStack>>> withRemovedPart(DollPart part) {
+		if (part == this) {
+			return Optional.of(new Tuple<>(Optional.empty(), allDollParts().map(DollPart::itemStack).collect(Collectors.toList())));
+		}
+		for (int i = 0; i < subParts.size(); i++) {
+			DollPart subPart = subParts.get(i);
+			Optional<Tuple<Optional<DollPart>, List<ItemStack>>> updatedSubPart = subPart.withRemovedPart(part);
+			if (updatedSubPart.isPresent()) {
+				Optional<DollPart> newSubPart = updatedSubPart.get().getA();
+				List<ItemStack> removedParts = updatedSubPart.get().getB();
+				if (newSubPart.isEmpty())
+				{
+					return Optional.of(new Tuple<>(Optional.of(new DollPart(itemStack, transform, Stream.concat(subParts.stream().limit(i), subParts.stream().skip(i + 1)).collect(Collectors.toList()))), removedParts));
+				} else {
+					return Optional.of(new Tuple<>(Optional.of(new DollPart(itemStack, transform, Stream.concat(
+							subParts.stream().limit(i),
+							Stream.concat(Stream.of(newSubPart.get()), subParts.stream().skip(i + 1))
+					).collect(Collectors.toList()))), removedParts));
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	@Override

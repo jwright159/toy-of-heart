@@ -53,21 +53,22 @@ public class AssemblerBlock extends BaseEntityBlock {
 
 	@Override
 	public @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!level.isClientSide) {
-			if (level.getBlockEntity(pos) instanceof AssemblerBlockEntity assembler) {
-				ItemStack stack = player.getItemInHand(hand);
-				if (!assembler.hasDoll() && stack.getItem() == ToyOfHeart.SLIM_BODY.get()) {
+		if (level.getBlockEntity(pos) instanceof AssemblerBlockEntity assembler)
+		{
+//			ToyOfHeart.LOGGER.info("Using assembler at {} with item: {}, has doll already: {}", pos, itemStack, assembler.hasDoll());
+			ItemStack stack = player.getItemInHand(hand);
+			if (!assembler.hasDoll() && stack.getItem() instanceof DollPartItem) {
+				if (!level.isClientSide)
+				{
 					assembler.addDoll(stack.copyWithCount(1));
 					if (!player.isCreative()) {
 						stack.shrink(1);
 					}
-				} else if (assembler.hasDoll() && stack.isEmpty()) {
-					ItemStack rootPart = assembler.removeDoll();
-					player.getInventory().placeItemBackInInventory(rootPart);
 				}
+				return ItemInteractionResult.SUCCESS;
 			}
 		}
-		return ItemInteractionResult.SUCCESS;
+		return ItemInteractionResult.FAIL;
 	}
 
 	@Override

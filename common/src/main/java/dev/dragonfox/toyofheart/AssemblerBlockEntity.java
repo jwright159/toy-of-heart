@@ -13,10 +13,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class AssemblerBlockEntity extends BlockEntity {
-	private ItemStack rootPart = ItemStack.EMPTY;
 	private AssemblingDollEntity doll = null;
 	private UUID dollUUID = null;
 
@@ -26,13 +27,9 @@ public class AssemblerBlockEntity extends BlockEntity {
 
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-//		ToyOfHeart.LOGGER.info("Saving assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, rootPart, doll != null ? doll.getUUID() : null, level);
-		if (!rootPart.isEmpty()) {
-			tag.put("rootPart", rootPart.save(provider));
-		}
-
-		if (getDoll() != null) {
-			tag.putUUID("dollUUID", getDoll().getUUID());
+//		ToyOfHeart.LOGGER.info("Saving assembler at {}  doll UUID: {}  level: {}", worldPosition, doll != null ? doll.getUUID() : dollUUID, level);
+		if (doll != null) {
+			tag.putUUID("dollUUID", doll.getUUID());
 		} else if (dollUUID != null) {
 			tag.putUUID("dollUUID", dollUUID);
 		}
@@ -40,13 +37,7 @@ public class AssemblerBlockEntity extends BlockEntity {
 
 	@Override
 	public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-//		ToyOfHeart.LOGGER.info("Loading assembler at {} with root part: {}  doll UUID: {}  level: {}", worldPosition, tag.contains("rootPart") ? tag.get("rootPart") : ItemStack.EMPTY, tag.contains("dollUUID") ? tag.getUUID("dollUUID") : null, level);
-		if (tag.contains("rootPart")) {
-			rootPart = ItemStack.parseOptional(provider, tag.getCompound("rootPart"));
-		} else {
-			rootPart = ItemStack.EMPTY;
-		}
-
+//		ToyOfHeart.LOGGER.info("Loading assembler at {}  doll ID: {}  level: {}", worldPosition, tag.contains("dollUUID") ? tag.getUUID("dollUUID") : tag.contains("dollId") ? tag.getInt("dollId") : null, level);
 		if (tag.contains("dollUUID")) {
 			dollUUID = tag.getUUID("dollUUID");
 			if (level instanceof ServerLevel serverLevel) {
@@ -67,7 +58,10 @@ public class AssemblerBlockEntity extends BlockEntity {
 	@Override
 	public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
 		CompoundTag tag = saveWithoutMetadata(provider);
-		tag.putInt("dollId", getDoll() != null ? getDoll().getId() : -1);
+		if (getDoll() != null) {
+			tag.remove("dollUUID");
+			tag.putInt("dollId", getDoll().getId());
+		}
 		return tag;
 	}
 
@@ -86,28 +80,35 @@ public class AssemblerBlockEntity extends BlockEntity {
 	public void dropItems() {
 		if (!hasDoll() || level == null) return;
 
-		level.addFreshEntity(new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, removeDoll()));
+		for (ItemStack item : removeDoll()) {
+			if (!item.isEmpty()) {
+				ItemEntity itemEntity = new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, item);
+				itemEntity.setDefaultPickUpDelay();
+				level.addFreshEntity(itemEntity);
+			}
+		}
 	}
 
 	public void deployDoll() {
 		if (!hasDoll() || level == null) return;
 
 		AssemblingDollEntity doll = getDoll();
-		DollEntity newDoll = new DollEntity(ToyOfHeart.DOLL.get(), level, this.rootPart);
+		DollEntity newDoll = new DollEntity(ToyOfHeart.DOLL.get(), level, getDoll().getDollParts().orElseThrow());
 		newDoll.moveTo(doll.getX(), doll.getY(), doll.getZ(), doll.getYRot(), doll.getXRot());
 		level.addFreshEntity(newDoll);
 		removeDoll();
 	}
 
 	public boolean hasDoll() {
-		return !rootPart.isEmpty();
+//		ToyOfHeart.LOGGER.info("Checking if assembler at {} has doll: {}  doll UUID: {}", worldPosition, doll, dollUUID);
+		return doll != null || dollUUID != null;
 	}
 
 	public void addDoll(ItemStack rootPart) {
+//		ToyOfHeart.LOGGER.info("Adding doll to assembler at {}  existing doll: {}", worldPosition, doll != null ? doll.getUUID() : dollUUID);
 		if (hasDoll() || level == null) return;
 
-		this.rootPart = rootPart.copy();
-		doll = new AssemblingDollEntity(ToyOfHeart.ASSEMBLING_DOLL.get(), level, this.rootPart);
+		doll = new AssemblingDollEntity(ToyOfHeart.ASSEMBLING_DOLL.get(), level, rootPart, Optional.of(worldPosition));
 		BlockState state = getBlockState();
 		doll.moveTo(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, state.getValue(AssemblerBlock.FACING).toYRot(), 0.0F);
 		level.addFreshEntity(doll);
@@ -116,16 +117,15 @@ public class AssemblerBlockEntity extends BlockEntity {
 		level.sendBlockUpdated(worldPosition, state, state, 2);
 	}
 
-	public ItemStack removeDoll() {
-		if (!hasDoll() || level == null) return ItemStack.EMPTY;
+	public List<ItemStack> removeDoll() {
+//		ToyOfHeart.LOGGER.info("Removing doll from assembler at {}  existing doll: {}", worldPosition, doll != null ? doll.getUUID() : dollUUID);
+		if (!hasDoll() || level == null) return List.of();
 
-		if (getDoll() != null) {
-			getDoll().discard();
-		}
+		List<ItemStack> items = getDoll().disassemble();
 		doll = null;
 		dollUUID = null;
 		setChanged();
 		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-		return rootPart.copyAndClear();
+		return items;
 	}
 }

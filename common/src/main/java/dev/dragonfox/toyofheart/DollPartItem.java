@@ -30,7 +30,7 @@ public class DollPartItem extends Item {
 
 	public Optional<DollPart.RaycastHit> raycast(DollPart part, Vector3f pos, Vector3f dir, Matrix4f transform)
 	{
-//		ToyOfHeart.LOGGER.info("START");
+//		ToyOfHeart.LOGGER.info("RAYCAST");
 //		ToyOfHeart.LOGGER.info("Before transform: pos = {}, dir = {}", pos, dir);
 		Matrix4f transformInv = transform.invert(new Matrix4f());
 		transformInv.transformPosition(pos);
