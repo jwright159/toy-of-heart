@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.List;
@@ -104,13 +103,10 @@ public class AssemblingDollEntity extends Entity {
 			{
 				DollPart.RaycastHit hit = hitOptional.get();
 
-				if (hitOptional.get().hitPart().itemStack().getItem() instanceof DollBodyPartItem && heldItemStack.getItem() instanceof DollPartItem)
+				if (hitOptional.get().hitPart().itemStack().getItem() instanceof DollBodyPartItem && heldItemStack.getItem() instanceof DollPartItem heldPart)
 				{
 //					ToyOfHeart.LOGGER.info("Adding onto doll");
-					Matrix4f transform = new Matrix4f(hit.hitPart().transform());
-					transform.translate(hit.localHitPos());
-
-					Optional<DollPart> newParts = parts.withChildPart(hit.hitPart(), new DollPart(heldItemStack.copyWithCount(1), transform));
+					Optional<DollPart> newParts = parts.withChildPart(hit.hitPart(), new DollPart(heldItemStack.copyWithCount(1), hit.newPartTransform(heldPart)));
 					if (newParts.isPresent())
 					{
 						if (!player.level().isClientSide)

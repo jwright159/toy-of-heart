@@ -12,6 +12,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -60,7 +61,7 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 	public static final EntityDataSerializer<Optional<DollPart>> OPTIONAL_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.optional(STREAM_CODEC));
 
 	public DollPart(ItemStack itemStack) {
-		this(itemStack, new Matrix4f(), List.of());
+		this(itemStack, new Matrix4f().translate(0, 3f / 16f, 0), List.of());
 	}
 
 	public DollPart(ItemStack itemStack, Matrix4f transform) {
@@ -138,5 +139,31 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 	}
 
 	public record RaycastHit(DollPart hitPart, double distance, Vector3f worldHitPos, Vector3f localHitPos, Vector3f worldHitNormal, Vector3f localHitNormal) {
+		public Vector3f roundedLocalHitPos() {
+			return new Vector3f(
+					Math.round(localHitPos.x * 16f) / 16f,
+					Math.round(localHitPos.y * 16f) / 16f,
+					Math.round(localHitPos.z * 16f) / 16f
+			);
+		}
+
+		public Quaternionf orientation() {
+			Vector3f up = new Vector3f(0, 1, 0);
+			Vector3f forward = new Vector3f(0, 0, 1); // might be -1 idk it doesn't really matter here
+			double rotDot = up.dot(localHitNormal);
+			double rotDotThreshold = 0.95;
+			Vector3f rotAxis = Math.abs(rotDot) > rotDotThreshold ? forward : up.cross(localHitNormal).normalize();
+			double rotAngle = Math.acos(rotDot);
+			AxisAngle4f axisAngle = new AxisAngle4f((float)rotAngle, rotAxis);
+			return new Quaternionf(axisAngle);
+		}
+
+		public Matrix4f newPartTransform(DollPartItem newPart) {
+			Matrix4f transform = new Matrix4f(hitPart.transform);
+			transform.translate(roundedLocalHitPos());
+			transform.rotate(orientation());
+			transform.translate(0, newPart.getPartHeight() / 2.0f, 0);
+			return transform;
+		}
 	}
 }

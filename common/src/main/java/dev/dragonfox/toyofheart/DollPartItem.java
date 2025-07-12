@@ -39,8 +39,8 @@ public class DollPartItem extends Item {
 
 		float minX = -getPartWidth() / 2;
 		float maxX = getPartWidth() / 2;
-		float minY = 0;
-		float maxY = getPartHeight();
+		float minY = -getPartHeight() / 2;
+		float maxY = getPartHeight() / 2;
 		float minZ = -getPartDepth() / 2;
 		float maxZ = getPartDepth() / 2;
 
@@ -71,7 +71,7 @@ public class DollPartItem extends Item {
 		}
 
 		float distance = tMin;
-		Vector3f localHitPos = pos.add(dir.mul(distance, new Vector3f()), new Vector3f());
+		Vector3f localHitPos = dir.mul(distance, new Vector3f()).add(pos);
 		Vector3f localHitNormal = new Vector3f(
 				Math.abs(localHitPos.x - minX) < 1e-6 ? -1 : (Math.abs(localHitPos.x - maxX) < 1e-6 ? 1 : 0),
 				Math.abs(localHitPos.y - minY) < 1e-6 ? -1 : (Math.abs(localHitPos.y - maxY) < 1e-6 ? 1 : 0),
@@ -81,7 +81,7 @@ public class DollPartItem extends Item {
 		transform.transformPosition(pos);
 		transform.transformDirection(dir);
 //		ToyOfHeart.LOGGER.info("After transform again: pos = {}, dir = {}", pos, dir);
-		Vector3f worldHitPos = pos.add(dir.mul(distance, new Vector3f()), new Vector3f());
+		Vector3f worldHitPos = dir.mul(distance, new Vector3f()).add(pos);
 		Vector3f worldHitNormal = transform.transformDirection(localHitNormal, new Vector3f());
 //		ToyOfHeart.LOGGER.info("World hit pos: {}, world hit normal: {}", worldHitPos, worldHitNormal);
 //		ToyOfHeart.LOGGER.info("Local hit pos again: {}, local hit normal again: {}", localHitPos, localHitNormal);
