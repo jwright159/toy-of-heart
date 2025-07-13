@@ -15,7 +15,6 @@ public final class ToyOfHeartFabricClient implements ClientModInitializer {
         ToyOfHeartClient.init();
 
         EntityRendererRegistry.register(ToyOfHeart.DOLL, DollRenderer::new);
-        EntityModelLayerRegistry.register(ToyOfHeartClient.DOLL_MODEL_LAYER, DollModel::createBodyLayer);
         EntityRendererRegistry.register(ToyOfHeart.ASSEMBLING_DOLL, AssemblingDollRenderer::new);
     }
 }

@@ -33,7 +33,7 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDollEntity>
 			Quaternionf rot = new Quaternionf().rotationY((float)Math.toRadians(entity.getYRot()));
 			pose.mulPose(rot);
 
-			renderParts(parts, entity, pose, buffers, light);
+			DollPartRenderer.render(parts, entity, pose, buffers, light);
 
 			LocalPlayer player = Minecraft.getInstance().player;
 			if (Minecraft.getInstance().crosshairPickEntity == entity && player != null)
@@ -55,16 +55,6 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDollEntity>
 			pose.popPose();
 		}
 		super.render(entity, yaw, tickDelta, pose, buffers, light);
-	}
-
-	private static void renderParts(DollPart part, AssemblingDollEntity entity, PoseStack pose, MultiBufferSource buffers, int light)
-	{
-		pose.pushPose();
-		pose.mulPose(part.transform());
-		Minecraft.getInstance().getItemRenderer().renderStatic(part.itemStack(), ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, pose, buffers, entity.level(), 0);
-		pose.popPose();
-		for (DollPart subParts : part.subParts())
-			renderParts(subParts, entity, pose, buffers, light);
 	}
 
 	@Override

@@ -1,15 +1,34 @@
 package dev.dragonfox.toyofheart.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.dragonfox.toyofheart.DollEntity;
+import dev.dragonfox.toyofheart.DollPart;
 import dev.dragonfox.toyofheart.ToyOfHeart;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 public class DollRenderer extends MobRenderer<DollEntity, DollModel> {
 	public DollRenderer(EntityRendererProvider.Context context) {
-		super(context, new DollModel(context.bakeLayer(ToyOfHeartClient.DOLL_MODEL_LAYER)), 0.5f);
+		super(context, new DollModel(), 0.5f);
+	}
+
+	@Override
+	public void render(DollEntity entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource buffers, int light) {
+		DollPart parts = entity.parts;
+		pose.pushPose();
+
+		Quaternionf rot = new Quaternionf().rotationY((float) Math.toRadians(entity.getYRot()));
+		pose.mulPose(rot);
+
+		DollPartRenderer.render(parts, entity, pose, buffers, light);
+
+		pose.popPose();
+
+		super.render(entity, yaw, tickDelta, pose, buffers, light);
 	}
 
 	@Override
