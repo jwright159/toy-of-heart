@@ -18,16 +18,19 @@ public class DollRenderer extends MobRenderer<DollEntity, DollModel> {
 
 	@Override
 	public void render(DollEntity entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource buffers, int light) {
-		DollPart parts = entity.parts;
-		pose.pushPose();
+		if (entity.getDollParts().isPresent())
+		{
+			DollPart parts = entity.getDollParts().get();
+			pose.pushPose();
 
-		Quaternionf rot = new Quaternionf().rotationY((float) Math.toRadians(entity.getYRot()));
-		pose.mulPose(rot);
+			Quaternionf rot = new Quaternionf().rotationY((float) Math.toRadians(entity.getYRot()));
+			pose.mulPose(rot);
+			pose.translate(0, entity.getBbHeight() / 2.0f, 0);
 
-		DollPartRenderer.render(parts, entity, pose, buffers, light);
+			DollPartRenderer.render(parts, entity, pose, buffers, light);
 
-		pose.popPose();
-
+			pose.popPose();
+		}
 		super.render(entity, yaw, tickDelta, pose, buffers, light);
 	}
 

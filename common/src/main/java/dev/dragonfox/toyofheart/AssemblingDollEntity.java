@@ -98,7 +98,7 @@ public class AssemblingDollEntity extends Entity {
 		{
 			DollPart parts = getDollParts().get();
 			Quaternionf rot = new Quaternionf().rotationY((float)Math.toRadians(getYRot()));
-			Optional<DollPart.RaycastHit> hitOptional = parts.raycastAll(player.getEyePosition(), player.getViewVector(1), position(), rot);
+			Optional<DollPart.RaycastHit> hitOptional = parts.raycastAll(player.getEyePosition(), player.getViewVector(1), position(), rot, getBbHeight());
 			if (hitOptional.isPresent())
 			{
 				DollPart.RaycastHit hit = hitOptional.get();

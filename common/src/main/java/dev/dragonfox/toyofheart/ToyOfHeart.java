@@ -40,12 +40,14 @@ public final class ToyOfHeart {
 	public static final RegistrySupplier<Item> DOLL_ITEM = ITEMS.register("doll", () -> new Item(new Item.Properties()));
 	public static final RegistrySupplier<Item> ASSEMBLER_ITEM = ITEMS.register(ASSEMBLER_BLOCK.getId(), () -> new BlockItem(ASSEMBLER_BLOCK.get(), new Item.Properties().arch$tab(ToyOfHeart.TAB)));
 	public static final RegistrySupplier<Item> SLIM_BODY = ITEMS.register("slim_body", () -> new DollBodyPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 4f / 16f, 6f / 16f, 2f / 16f));
+	public static final RegistrySupplier<Item> ARM = ITEMS.register("arm", () -> new DollArmPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 2f / 16f, 6f / 16f, 2f / 16f));
+	public static final RegistrySupplier<Item> LEG = ITEMS.register("leg", () -> new DollLegPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 2f / 16f, 6f / 16f, 2f / 16f));
 
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(MOD_ID, Registries.BLOCK_ENTITY_TYPE);
 	public static final RegistrySupplier<BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = BLOCK_ENTITIES.register("assembler", () -> BlockEntityType.Builder.of(AssemblerBlockEntity::new, ASSEMBLER_BLOCK.get()).build(null));
 
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(MOD_ID, Registries.ENTITY_TYPE);
-	public static final RegistrySupplier<EntityType<DollEntity>> DOLL = ENTITIES.register("doll", () -> EntityType.Builder.of(DollEntity::spawnDefault, MobCategory.MISC).sized(0.75f, 0.75f).build("doll"));
+	public static final RegistrySupplier<EntityType<DollEntity>> DOLL = ENTITIES.register("doll", () -> EntityType.Builder.of(DollEntity::spawnDefault, MobCategory.MISC).sized(4f / 16f, 6f / 16f).build("doll"));
 	public static final RegistrySupplier<EntityType<AssemblingDollEntity>> ASSEMBLING_DOLL = ENTITIES.register("assembling_doll", () -> EntityType.Builder.of(AssemblingDollEntity::spawnDefault, MobCategory.MISC).sized(4f / 16f, 6f / 16f).build("assembling_doll"));
 
 	public static void init() {

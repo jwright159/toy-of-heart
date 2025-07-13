@@ -32,6 +32,7 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDollEntity>
 
 			Quaternionf rot = new Quaternionf().rotationY((float)Math.toRadians(entity.getYRot()));
 			pose.mulPose(rot);
+			pose.translate(0, entity.getBbHeight() / 2.0f, 0);
 
 			DollPartRenderer.render(parts, entity, pose, buffers, light);
 
@@ -41,7 +42,7 @@ public class AssemblingDollRenderer extends EntityRenderer<AssemblingDollEntity>
 				ItemStack heldItemStack = player.getItemInHand(InteractionHand.MAIN_HAND).copyWithCount(1);
 				if (heldItemStack.getItem() instanceof DollPartItem heldPart)
 				{
-					Optional<DollPart.RaycastHit> hitOptional = parts.raycastAll(player.getEyePosition(tickDelta), player.getViewVector(tickDelta), entity.getPosition(tickDelta), rot);
+					Optional<DollPart.RaycastHit> hitOptional = parts.raycastAll(player.getEyePosition(tickDelta), player.getViewVector(tickDelta), entity.getPosition(tickDelta), rot, entity.getBbHeight());
 					if (hitOptional.isPresent() && hitOptional.get().hitPart().itemStack().getItem() instanceof DollBodyPartItem) {
 						DollPart.RaycastHit hit = hitOptional.get();
 						pose.pushPose();

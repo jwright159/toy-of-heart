@@ -61,7 +61,7 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 	public static final EntityDataSerializer<Optional<DollPart>> OPTIONAL_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.optional(STREAM_CODEC));
 
 	public DollPart(ItemStack itemStack) {
-		this(itemStack, new Matrix4f().translate(0, 3f / 16f, 0), List.of());
+		this(itemStack, new Matrix4f(), List.of());
 	}
 
 	public DollPart(ItemStack itemStack, Matrix4f transform) {
@@ -72,18 +72,19 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 		return subParts.stream().map(DollPart::allDollParts).reduce(Stream.of(this), Stream::concat);
 	}
 
-	public Optional<RaycastHit> raycast(Vec3 rayPos, Vec3 rayDir, Vec3 entityPos, Quaternionf entityRot) {
+	public Optional<RaycastHit> raycast(Vec3 rayPos, Vec3 rayDir, Vec3 entityPos, Quaternionf entityRot, float entityHeight) {
 		DollPartItem partItem = (DollPartItem) itemStack.getItem();
 		Matrix4f partTransform = new Matrix4f();
 		partTransform.translate(entityPos.toVector3f());
+		partTransform.translate(0, entityHeight / 2.0f, 0);
 		partTransform.rotate(entityRot);
 		partTransform.mul(transform);
 		return partItem.raycast(this, rayPos.toVector3f(), rayDir.toVector3f(), partTransform);
 	}
 
-	public Optional<RaycastHit> raycastAll(Vec3 rayPos, Vec3 rayDir, Vec3 entityPos, Quaternionf entityRot) {
+	public Optional<RaycastHit> raycastAll(Vec3 rayPos, Vec3 rayDir, Vec3 entityPos, Quaternionf entityRot, float entityHeight) {
 		return allDollParts()
-				.flatMap(part -> part.raycast(rayPos, rayDir, entityPos, entityRot).stream())
+				.flatMap(part -> part.raycast(rayPos, rayDir, entityPos, entityRot, entityHeight).stream())
 				.min(Comparator.comparingDouble(RaycastHit::distance));
 	}
 
@@ -127,6 +128,26 @@ public record DollPart(ItemStack itemStack, Matrix4f transform, List<DollPart> s
 			}
 		}
 		return Optional.empty();
+	}
+
+	public float maxY() {
+		Vector3f localMin = itemStack.getItem() instanceof DollPartItem partItem ? new Vector3f(-partItem.getPartWidth() / 2, -partItem.getPartHeight() / 2, -partItem.getPartDepth() / 2) : new Vector3f();
+		Vector3f localMax = itemStack.getItem() instanceof DollPartItem partItem ? new Vector3f(partItem.getPartWidth() / 2, partItem.getPartHeight() / 2, partItem.getPartDepth() / 2) : new Vector3f();
+		Vector3f transformedMin = transform.transformPosition(localMin, new Vector3f());
+		Vector3f transformedMax = transform.transformPosition(localMax, new Vector3f());
+		return Stream.concat(Stream.of(transformedMin.y, transformedMax.y), subParts.stream().map(DollPart::maxY)).max(Comparator.naturalOrder()).orElse(0.0f);
+	}
+
+	public float minY() {
+		Vector3f localMin = itemStack.getItem() instanceof DollPartItem partItem ? new Vector3f(-partItem.getPartWidth() / 2, -partItem.getPartHeight() / 2, -partItem.getPartDepth() / 2) : new Vector3f();
+		Vector3f localMax = itemStack.getItem() instanceof DollPartItem partItem ? new Vector3f(partItem.getPartWidth() / 2, partItem.getPartHeight() / 2, partItem.getPartDepth() / 2) : new Vector3f();
+		Vector3f transformedMin = transform.transformPosition(localMin, new Vector3f());
+		Vector3f transformedMax = transform.transformPosition(localMax, new Vector3f());
+		return Stream.concat(Stream.of(transformedMin.y, transformedMax.y), subParts.stream().map(DollPart::minY)).min(Comparator.naturalOrder()).orElse(0.0f);
+	}
+
+	public float height() {
+		return maxY() - minY();
 	}
 
 	@Override
