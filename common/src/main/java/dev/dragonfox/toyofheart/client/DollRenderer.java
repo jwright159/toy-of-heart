@@ -25,7 +25,7 @@ public class DollRenderer extends MobRenderer<DollEntity, DollModel> {
 
 			Quaternionf rot = new Quaternionf().rotationY((float) Math.toRadians(entity.getYRot()));
 			pose.mulPose(rot);
-			pose.translate(0, entity.getBbHeight() / 2.0f, 0);
+			pose.translate(0, -parts.minY(), 0);
 
 			DollPartRenderer.render(parts, entity, pose, buffers, light);
 
