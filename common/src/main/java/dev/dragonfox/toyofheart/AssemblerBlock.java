@@ -61,7 +61,7 @@ public class AssemblerBlock extends BaseEntityBlock {
 				if (!level.isClientSide)
 				{
 					assembler.addDoll(stack.copyWithCount(1));
-					if (!player.isCreative()) {
+					if (!player.hasInfiniteMaterials()) {
 						stack.shrink(1);
 					}
 				}

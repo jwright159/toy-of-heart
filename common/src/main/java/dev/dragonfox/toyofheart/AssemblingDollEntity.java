@@ -112,7 +112,7 @@ public class AssemblingDollEntity extends Entity {
 						if (!player.level().isClientSide)
 						{
 							entityData.set(DOLL_PARTS, newParts);
-							if (!player.isCreative())
+							if (!player.hasInfiniteMaterials())
 								heldItemStack.shrink(1);
 						}
 						return InteractionResult.SUCCESS;
@@ -138,7 +138,7 @@ public class AssemblingDollEntity extends Entity {
 								}
 							}
 
-							if (!player.isCreative()) {
+							if (!player.hasInfiniteMaterials()) {
 								List<ItemStack> removedParts = newParts.get().getB();
 								for (ItemStack removedPart : removedParts) {
 									if (!removedPart.isEmpty()) {
