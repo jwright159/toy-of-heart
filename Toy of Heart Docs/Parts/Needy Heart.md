@@ -1,0 +1,1 @@
+A [[Heart]] that requires emotional maintenance. Breaks, sleep, recreation, etc.

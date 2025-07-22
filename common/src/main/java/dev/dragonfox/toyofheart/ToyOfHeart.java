@@ -40,6 +40,7 @@ public final class ToyOfHeart {
 	public static final RegistrySupplier<Item> DOLL_ITEM = ITEMS.register("doll", () -> new Item(new Item.Properties()));
 	public static final RegistrySupplier<Item> ASSEMBLER_ITEM = ITEMS.register(ASSEMBLER_BLOCK.getId(), () -> new BlockItem(ASSEMBLER_BLOCK.get(), new Item.Properties().arch$tab(ToyOfHeart.TAB)));
 	public static final RegistrySupplier<Item> SLIM_BODY = ITEMS.register("slim_body", () -> new DollBodyPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 4f / 16f, 6f / 16f, 2f / 16f));
+	public static final RegistrySupplier<Item> STOUT_BODY = ITEMS.register("stout_body", () -> new DollBodyPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 4f / 16f, 4f / 16f, 4f / 16f));
 	public static final RegistrySupplier<Item> ARM = ITEMS.register("arm", () -> new DollArmPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 2f / 16f, 6f / 16f, 2f / 16f));
 	public static final RegistrySupplier<Item> LEG = ITEMS.register("leg", () -> new DollLegPartItem(new Item.Properties().arch$tab(ToyOfHeart.TAB), 2f / 16f, 6f / 16f, 2f / 16f));
 

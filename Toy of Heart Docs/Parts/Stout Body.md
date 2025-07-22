@@ -1,1 +1,1 @@
-A [[Body]] reminiscent of a typical Minecraft head.
+A [[Body]] reminiscent of a typical Minecraft head. Is actually the head.
